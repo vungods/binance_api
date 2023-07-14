@@ -8,6 +8,7 @@ TEST_API_SECRET = 'bTEGJyrHWKpPHSxfF3nXAu8ruZsbcXqYwlKnHDiI4mRKRNqH6VbB9ILsmTbQR
 client = Client(api_key=TEST_API_KEY, api_secret=TEST_API_SECRET, testnet=True)
 import json
 from binance.client import Client
+import datetime
 
 def create_data_dict(data):
     data_dict = {
@@ -29,8 +30,8 @@ def create_data_dict(data):
     return data_dict
 
 
-def save_to_json(data, pairs):
-    file_name = "data.json"
+def save_multi_symbol_to_json(data, pairs):
+    file_name = "multi_symbol.json"
     data_all = {}  # Create an empty dictionary to store all data_dict dictionaries
     with open(file_name, 'a') as file:
         for pair, pair_data in zip(pairs, data):
@@ -39,6 +40,12 @@ def save_to_json(data, pairs):
 
         json.dump(data_all, file)
         file.write('\n')
+def save_price_to_json(total_balance):
+    file_name = "account_balance.json"
+    with open(file_name, 'a') as file:
+        json.dump(total_balance, file)
+        file.write('\n')
+
 
 
 trading_pairs = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "XRPUSDT", "LTCUSDT"]
@@ -48,10 +55,14 @@ api_secret = 'bTEGJyrHWKpPHSxfF3nXAu8ruZsbcXqYwlKnHDiI4mRKRNqH6VbB9ILsmTbQRYXc'
 client = Client(api_key, api_secret)
 
 while True:
+    print("Running")
     data = []
     for pair in trading_pairs:
         pair_data = client.get_historical_klines(pair, Client.KLINE_INTERVAL_3MINUTE, "3 min ago UTC")
         pair_data[0].append(pair)
         data.append(pair_data[0])
-    save_to_json(data, trading_pairs)
-    time.sleep(180)
+    save_multi_symbol_to_json(data, trading_pairs)
+    current_balance = get_current_USDT_blance()
+    total_balance = {"total": f"{current_balance}", "time": f"{datetime.datetime.now()}"}
+    save_price_to_json(total_balance)
+    time.sleep(3)
