@@ -64,4 +64,4 @@ while True:
     current_balance = get_current_USDT_blance()
     total_balance = {"total": f"{current_balance}", "time": f"{datetime.datetime.now()}"}
     save_price_to_json(total_balance)
-    time.sleep(3)
+    time.sleep(30)
