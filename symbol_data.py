@@ -53,9 +53,8 @@ api_key = '38a8NZYdoKTqdQBvztjSDVI0kZUSuvA6tC0LDKohH5hPfE5S6QTxJWIe9FMZFj2q'
 api_secret = 'bTEGJyrHWKpPHSxfF3nXAu8ruZsbcXqYwlKnHDiI4mRKRNqH6VbB9ILsmTbQRYXc'
 # Initialize Binance client
 client = Client(api_key, api_secret)
-
+print("Running")
 while True:
-    print("Running")
     data = []
     for pair in trading_pairs:
         pair_data = client.get_historical_klines(pair, Client.KLINE_INTERVAL_3MINUTE, "3 min ago UTC")
