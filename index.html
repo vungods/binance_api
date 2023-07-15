@@ -10,7 +10,6 @@
     <h3>First Chart</h3>
   </header>
     <canvas id="financeChart"></canvas>
-<<<<<<< HEAD
     <select id="limitSelect">
       <option value="20">20</option>
       <option value="50">50</option>
@@ -21,77 +20,5 @@
 <div style="margin-top: 30px;">
   <a href="index2.html"  style="text-decoration: none; background-color: rgb(76, 164, 252); padding: 8px 16px; border-radius: 20px; color: aliceblue;">Biểu đồ 2</a>
 </div>
-=======
-
-    <script>
-      // Create the initial line chart
-      const ctx = document.getElementById("financeChart").getContext("2d");
-      const chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: [],
-          datasets: [
-            {
-              label: "Price",
-              data: [],
-              backgroundColor: "rgba(0, 123, 255, 0.5)",
-              borderColor: "rgba(0, 123, 255, 1)",
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: false,
-            },
-          },
-        },
-      });
-
-      // Function to update the chart with new data
-      function updateChart(data) {
-        chart.data.labels.push(data.time);
-        chart.data.datasets[0].data.push(data.total);
-        chart.update();
-      }
-
-      // Function to read the JSON file and update the chart
-      async function readDataFile() {
-        console.log("Reading data file...");
-        try {
-          const response = await fetch("account_balance.json");
-          const lines = await response.text();
-          const jsonData = lines
-            .trim()
-            .split("\n")
-            .map((line) => JSON.parse(line));
-
-          // Filter out duplicates
-          const existingLabels = chart.data.labels;
-          const newData = jsonData.filter(
-            (data) => !existingLabels.includes(data.time)
-          );
-
-          // Update the chart with non-duplicate data
-          newData.forEach((data) => updateChart(data));
-          applyCustomRange();
-        } catch (error) {}
-      }
-
-      // Function to continuously update the chart at a specified interval
-      function startUpdatingChart(interval) {
-        setInterval(function () {
-          readDataFile();
-        }, interval);
-      }
-
-      // Read the JSON file and update the chart initially
-      readDataFile();
-
-      // Start updating the chart every 30 seconds (30000 milliseconds)
-      startUpdatingChart(30000);
-    </script>
->>>>>>> parent of b2bbf8f ("update")
   </body>
 </html>
