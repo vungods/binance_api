@@ -13,10 +13,17 @@
       <option value="XRPUSDT">XRPUSDT</option>
       <option value="LTCUSDT">LTCUSDT</option>
     </select>
+    <select id="limitSelect">
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+    </select>
     <canvas id="financeChart"></canvas>
 
     <script>
       const symbolSelect = document.getElementById("symbolSelect");
+      const limitSelect = document.getElementById("limitSelect");
       const ctx = document.getElementById("financeChart").getContext("2d");
       let chart;
 
@@ -27,7 +34,7 @@
         chart.data.datasets[1].data.push(parseFloat(data.Volume));
 
         // Check and remove the first data point if it exceeds the maximum limit
-        if (chart.data.labels.length > 20) {
+        if (chart.data.labels.length > getSelectedLimit()) {
           chart.data.labels.shift();
           chart.data.datasets[0].data.shift();
           chart.data.datasets[1].data.shift();
@@ -52,11 +59,12 @@
             data.hasOwnProperty(selectedSymbol)
           );
 
+          const selectedLimit = getSelectedLimit();
           chart.data.labels.length = 0;
           chart.data.datasets[0].data.length = 0;
           chart.data.datasets[1].data.length = 0;
 
-          newData.slice(-20).forEach((data) => {
+          newData.slice(-selectedLimit).forEach((data) => {
             const selectedData = data[selectedSymbol];
             chart.data.labels.push(selectedData["Open time"]);
             chart.data.datasets[0].data.push(parseFloat(selectedData.Close));
@@ -69,8 +77,44 @@
         }
       }
 
+      // Function to read the selected symbol from localStorage
+      function getSelectedSymbol() {
+        return localStorage.getItem("selectedSymbol") || "BTCUSDT";
+      }
+
+      // Function to save the selected symbol to localStorage
+      function saveSelectedSymbol(symbol) {
+        localStorage.setItem("selectedSymbol", symbol);
+      }
+
+      // Function to read the selected limit from localStorage
+      function getSelectedLimit() {
+        return parseInt(localStorage.getItem("selectedLimit")) || 20;
+      }
+
+      // Function to save the selected limit to localStorage
+      function saveSelectedLimit(limit) {
+        localStorage.setItem("selectedLimit", limit);
+      }
+
+      // Function to set the selected option in the select element
+      function setSelectedOption(selectElement, value) {
+        selectElement.value = value;
+      }
+
       // Event listener for symbol selection change
-      symbolSelect.addEventListener("change", readDataFile);
+      symbolSelect.addEventListener("change", function () {
+        const selectedSymbol = symbolSelect.value;
+        saveSelectedSymbol(selectedSymbol);
+        readDataFile();
+      });
+
+      // Event listener for limit selection change
+      limitSelect.addEventListener("change", function () {
+        const selectedLimit = limitSelect.value;
+        saveSelectedLimit(selectedLimit);
+        readDataFile();
+      });
 
       // Initialize the chart
       chart = new Chart(ctx, {
@@ -117,6 +161,14 @@
           },
         },
       });
+
+      // Read the selected symbol from localStorage and set the selected option initially
+      const selectedSymbol = getSelectedSymbol();
+      setSelectedOption(symbolSelect, selectedSymbol);
+
+      // Read the selected limit from localStorage and set the selected option initially
+      const selectedLimit = getSelectedLimit();
+      setSelectedOption(limitSelect, selectedLimit.toString());
 
       // Read the JSON file and update the chart initially
       readDataFile();

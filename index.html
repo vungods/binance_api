@@ -8,6 +8,13 @@
   <body>
     <canvas id="financeChart"></canvas>
 
+    <select id="limitSelect">
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+    </select>
+
     <script>
       // Create the initial line chart
       const ctx = document.getElementById("financeChart").getContext("2d");
@@ -71,8 +78,34 @@
         }, interval);
       }
 
+      // Event listener for the select button
+      const limitSelect = document.getElementById("limitSelect");
+      limitSelect.addEventListener("change", function () {
+        const selectedLimit = parseInt(limitSelect.value);
+        updateChartLimit(selectedLimit);
+        // Save the selected value to localStorage
+        localStorage.setItem("selectedLimit", selectedLimit);
+      });
+
+      // Function to update the chart with the selected limit
+      function updateChartLimit(limit) {
+        if (chart.data.labels.length > limit) {
+          const difference = chart.data.labels.length - limit;
+          chart.data.labels.splice(0, difference);
+          chart.data.datasets[0].data.splice(0, difference);
+          chart.update();
+        }
+      }
+
       // Read the JSON file and update the chart initially
       readDataFile();
+
+      // Retrieve the selected value from localStorage and set it as the initial selected value
+      const savedSelectedLimit = localStorage.getItem("selectedLimit");
+      if (savedSelectedLimit) {
+        limitSelect.value = savedSelectedLimit;
+        updateChartLimit(parseInt(savedSelectedLimit));
+      }
 
       // Start updating the chart every 30 seconds (30000 milliseconds)
       startUpdatingChart(30000);
