@@ -59,15 +59,9 @@ while True:
     for pair in trading_pairs:
         pair_data = client.get_historical_klines(pair, Client.KLINE_INTERVAL_3MINUTE, "3 min ago UTC")
         pair_data[0].append(pair)
-
-        # Convert the timestamp to the desired format
-        timestamp = pair_data[0][0] / 1000  # Divide by 1000 to convert from milliseconds to seconds
-        date_time = datetime.datetime.fromtimestamp(timestamp).strftime("%H:%M:%S %d-%m")
-        pair_data[0][0] = date_time
-
         data.append(pair_data[0])
     save_multi_symbol_to_json(data, trading_pairs)
     current_balance = get_current_USDT_blance()
     total_balance = {"total": f"{current_balance}", "time": f"{datetime.datetime.now()}"}
     save_price_to_json(total_balance)
-    time.sleep(3)
+    time.sleep(30)
