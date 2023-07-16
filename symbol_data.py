@@ -30,6 +30,19 @@ def create_data_dict(data):
     return data_dict
 
 
+import json
+import os
+
+def check_json_file(file_name):
+    if os.path.exists(file_name):
+        with open(file_name, 'r') as file:
+            lines = file.readlines()
+            if len(lines) > 200:
+                lines = lines[-200:]  # Chỉ lấy 200 dòng cuối cùng
+
+        with open(file_name, 'w') as file:
+            file.writelines(lines)
+
 def save_multi_symbol_to_json(data, pairs):
     file_name = "multi_symbol.json"
     data_all = {}  # Create an empty dictionary to store all data_dict dictionaries
@@ -40,11 +53,17 @@ def save_multi_symbol_to_json(data, pairs):
 
         json.dump(data_all, file)
         file.write('\n')
+
+    check_json_file(file_name)  # Áp dụng hàm kiểm tra và chỉnh sửa file JSON
+
 def save_price_to_json(total_balance):
     file_name = "account_balance.json"
     with open(file_name, 'a') as file:
         json.dump(total_balance, file)
         file.write('\n')
+
+    check_json_file(file_name)  # Áp dụng hàm kiểm tra và chỉnh sửa file JSON
+
 
 
 
@@ -64,4 +83,4 @@ while True:
     current_balance = get_current_USDT_blance()
     total_balance = {"total": f"{current_balance}", "time": f"{datetime.datetime.now()}"}
     save_price_to_json(total_balance)
-    time.sleep(30)
+    time.sleep(5)

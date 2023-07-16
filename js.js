@@ -90,4 +90,4 @@ if (savedSelectedLimit) {
 }
 
 // Start updating the chart every 30 seconds (30000 milliseconds)
-startUpdatingChart(30000);
+// startUpdatingChart(30000);
